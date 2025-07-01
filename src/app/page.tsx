@@ -20,22 +20,41 @@ export default function PasswordGenerator() {
   const [copied, setCopied] = useState(false);
 
   const generatePassword = () => {
+    console.log("=== 生成密码函数被调用 ===");
+    console.log("当前状态:", { 
+      includeUppercase, 
+      includeLowercase, 
+      includeNumbers, 
+      includeSymbols, 
+      length: length[0] 
+    });
+    
     let charset = "";
     if (includeUppercase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     if (includeLowercase) charset += "abcdefghijklmnopqrstuvwxyz";
     if (includeNumbers) charset += "0123456789";
     if (includeSymbols) charset += "!@#$%^&*()_+-=[]{}|;:,.<>?";
 
+    console.log("生成的字符集:", charset);
+    console.log("字符集长度:", charset.length);
+
     if (charset === "") {
+      console.log("错误: 没有选择任何字符类型");
       alert("请至少选择一种字符类型");
       return;
     }
 
     let newPassword = "";
     for (let i = 0; i < length[0]; i++) {
-      newPassword += charset.charAt(Math.floor(Math.random() * charset.length));
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      const randomChar = charset.charAt(randomIndex);
+      newPassword += randomChar;
+      console.log(`第${i+1}位: 索引${randomIndex} -> ${randomChar}`);
     }
+    
+    console.log("最终生成的密码:", newPassword);
     setPassword(newPassword);
+    console.log("密码已设置到state");
   };
 
   const copyToClipboard = async () => {
@@ -165,7 +184,10 @@ export default function PasswordGenerator() {
                   <Checkbox
                     id="uppercase"
                     checked={includeUppercase}
-                    onCheckedChange={setIncludeUppercase}
+                    onCheckedChange={(checked) => {
+                      console.log("大写字母选择变化:", checked);
+                      setIncludeUppercase(checked === true);
+                    }}
                   />
                   <Label htmlFor="uppercase" className="text-sm">
                     大写字母 (A-Z)
@@ -175,7 +197,10 @@ export default function PasswordGenerator() {
                   <Checkbox
                     id="lowercase"
                     checked={includeLowercase}
-                    onCheckedChange={setIncludeLowercase}
+                    onCheckedChange={(checked) => {
+                      console.log("小写字母选择变化:", checked);
+                      setIncludeLowercase(checked === true);
+                    }}
                   />
                   <Label htmlFor="lowercase" className="text-sm">
                     小写字母 (a-z)
@@ -185,7 +210,10 @@ export default function PasswordGenerator() {
                   <Checkbox
                     id="numbers"
                     checked={includeNumbers}
-                    onCheckedChange={setIncludeNumbers}
+                    onCheckedChange={(checked) => {
+                      console.log("数字选择变化:", checked);
+                      setIncludeNumbers(checked === true);
+                    }}
                   />
                   <Label htmlFor="numbers" className="text-sm">
                     数字 (0-9)
@@ -195,7 +223,10 @@ export default function PasswordGenerator() {
                   <Checkbox
                     id="symbols"
                     checked={includeSymbols}
-                    onCheckedChange={setIncludeSymbols}
+                    onCheckedChange={(checked) => {
+                      console.log("符号选择变化:", checked);
+                      setIncludeSymbols(checked === true);
+                    }}
                   />
                   <Label htmlFor="symbols" className="text-sm">
                     特殊符号 (!@#$...)
@@ -206,9 +237,13 @@ export default function PasswordGenerator() {
 
             {/* 生成按钮 */}
             <Button
-              onClick={generatePassword}
+              onClick={() => {
+                console.log("=== 按钮被点击 ===");
+                generatePassword();
+              }}
               className="w-full"
               size="lg"
+              type="button"
             >
               <RefreshCw className="mr-2 h-4 w-4" />
               生成密码
